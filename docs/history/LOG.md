@@ -103,3 +103,7 @@ describes current behaviour; NOW.md and the state doc do.
 - archived `docs/history/PROJECT-DOCUMENTATION-README-2026-08-10.md`: the former project-documentation index, archived 2026-08-10, replaced by `docs/current/README.md`.
 - archived `docs/history/ROOT-README-2026-08-10.md`: the former repository README, archived 2026-08-10, replaced by `README.md`.
 - archived `docs/history/VISUAL_GUIDELINES-superseded.md`: the prior visual guidelines, archived 2026-08-20, replaced by `project-documentation/BRANDING.md` and `docs/current/product.md`.
+
+## 2026-11-14
+
+- reconciled `NOW.md`: re-stamped `as_of` and `head`, merged the Documentation bullet out of "Where it is right now" (the 2026-09-07 archive move is already logged above), and added the 2026-09-08 to 2026-10-15 changes from commit messages.

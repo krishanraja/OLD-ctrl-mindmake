@@ -1,9 +1,9 @@
 ---
 repo: krishanraja/mm-ctrl
 product: CTRL by Mindmake
-as_of: 2026-10-23
-head: 860dea0
-head_scope: G16 application release receipt
+as_of: 2026-11-14
+head: cba7302
+head_scope: canon sync after the OpenAI storage fix and the synthetic Brain lab
 lifecycle: live
 production_url: https://makeyourmindup.ai
 state_doc: docs/current/release-state.md
@@ -32,7 +32,7 @@ Angles a writer can use without asking Krish, each with its pointer:
 
 Objection it answers: "He talks about AI. Has he shipped anything a customer pays for and kept it honest?" Here is the product, with its failures in the changelog.
 
-## Where it is right now (as of 2026-10-23)
+## Where it is right now (as of 2026-11-14)
 
 <!-- north-star-state {"week_of":"2026-11-02","week_target":3,"current":0,"current_as_of":"2026-11-02","current_source":"Supabase ctrl: north_star_flywheel view (flywheel_users), read by Control Center","urgency":5,"urgency_reason":"under 40% of the week's target two weeks running (0% now)"} --> **North Star number: U5, stalled.** Flywheel leaders this week (at least 5 brain facts and a decision weighed in the last 7 days): 0, against 3 this week, on the way to 1,000 by 29 March 2027. Everything else pauses unless it moves the number.
 
@@ -43,11 +43,13 @@ Objection it answers: "He talks about AI. Has he shipped anything a customer pay
 - **Scheduled work:** twelve pg_cron jobs active at the 2026-08-20 readback, including the nightly `retention-cleanup` added that day (release state, "Scheduled work actually running").
 - **Pricing:** Free, and Edge Pro at $49 monthly. Canonical in `supabase/functions/_shared/edge-pricing.ts`; `public/.well-known/product.json` mirrors it and `npm run docs:check` fails if they disagree.
 - **Compliance:** controls in place are listed at `/trust` and in `project-documentation/compliance/`; no SOC 2 report, no ISO 27001 certificate, HIPAA out of scope.
-- **Documentation:** 64 files uploaded on 2026-09-04 without headers were classed Historical and moved to `docs/history/` today; nine reconciled docs the upload overwrote were restored (`docs/history/LOG.md`, 2026-09-07).
-- **Waiting on evidence, not code:** deployment of `video-radar-export` and of the PR #375 change.
+- **Waiting on evidence, not code:** deployment of `video-radar-export` and of the PR #375 change. Deployment of the work merged since 2026-09-08 (the synthetic lab route, the gather record tables, the OpenAI storage change) is unverified here; read `docs/current/release-state.md`.
 
 ## What changed recently
 
+- 2026-10-15 **OpenAI chat storage is switched off.** PR #398, "Disable storage for OpenAI Chat Completions", sets the privacy fix in `supabase/functions/_shared/openai-utils.ts` and binds the privacy functions to the configured project. Merged; no deployment readback is recorded here.
+- 2026-09-22 **The gather now keeps every article it sees, not the twenty it serves.** `live-headlines` fetches several hundred AI stories a day and serves twenty, so "the rejected majority never existed as data". Three append-only record tables fix that (commit `a6ce832a`; migration `20260922100000_ctrl_keeps_what_it_gathered.sql`). The same commit found `cleanup-expired-data` had deleted nothing since it was written, because it targeted `ai_cache`, a table no migration creates. The commit states no migration has been applied to the shared project.
+- 2026-09-08 **The synthetic Brain lab and capture contract landed, still off customer paths.** Strict Brain adapter primitives (#385), a synthetic population (#388) and a range lab route (#389, #391), then the G20 contract for one-gesture private-staging capture and read-only Claude context capsules (#392). Contracts: `project-documentation/ctrl-evolution/g17-*`, `g18-*`, `g20-*`.
 - 2026-10-23 **The North Star now has a number, a weekly ladder and an urgency rating, so every session knows how far behind it is and how hard to push.** Ruling (Krish, 2026-10-23): every repository chases one aggressive number on a weekly ladder, and urgency U1 to U5 sets its intensity. The number and ladder are in `project-documentation/NORTH_STAR.md`; where it stands is the first line under "Where it is right now". Contract: ai-harness `contract/north-star-metric.md`.
 
 ## What is next and what is waiting on Krish
