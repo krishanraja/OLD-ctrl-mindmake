@@ -12,7 +12,7 @@ One person (you), one day, zero code. This runs the whole chain by hand using th
 
 ## What you need
 
-- One or two call transcripts (Fireflies export is fine) or 3 to 5 pieces of your real recent writing, pasted.
+- One or two call transcripts (an export from your meeting recorder is fine) or 3 to 5 pieces of your real recent writing, pasted.
 - Six pieces of your own past work on one surface (client emails, board updates, or LinkedIn posts; pick ONE surface).
 - Four pieces of someone else's public writing in the same surface (a peer's real LinkedIn posts or published memos; attributed, public).
 - About 20 minutes for the sort itself; an hour total.
