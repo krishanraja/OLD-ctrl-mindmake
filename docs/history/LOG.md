@@ -4,6 +4,13 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-11-14
+
+- reconciled `NOW.md`: re-stamped `as_of` and `head`, merged the Documentation bullet out of "Where it is right now" (the 2026-09-07 archive move is already logged above), and added the 2026-09-08 to 2026-10-15 changes from commit messages.
+- rolled from NOW.md: bullets more than 30 days old (the steward's window):
+  - 2026-09-22 **The gather now keeps every article it sees, not the twenty it serves.** `live-headlines` fetches several hundred AI stories a day and serves twenty, so "the rejected majority never existed as data". Three append-only record tables fix that (commit `a6ce832a`; migration `20260922100000_ctrl_keeps_what_it_gathered.sql`). The same commit found `cleanup-expired-data` had deleted nothing since it was written, because it targeted `ai_cache`, a table no migration creates. The commit states no migration has been applied to the shared project.
+  - 2026-09-08 **The synthetic Brain lab and capture contract landed, still off customer paths.** Strict Brain adapter primitives (#385), a synthetic population (#388) and a range lab route (#389, #391), then the G20 contract for one-gesture private-staging capture and read-only Claude context capsules (#392). Contracts: `project-documentation/ctrl-evolution/g17-*`, `g18-*`, `g20-*`.
+
 ## 2026-10-23
 
 - rolled from NOW.md: bullets more than 30 days old (the steward's window):
