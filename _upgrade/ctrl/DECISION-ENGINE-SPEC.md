@@ -1,7 +1,7 @@
 # CTRL Decision Engine: Build-Ready Spec
 
 Grounded against the live `mm-ctrl` codebase (Supabase project `bkyuxvschuwngtcdhsyg`).
-Scope locked at gate: full looped version (synchronous engine + WATCH loop + Briefing alerts + Fireflies ingestion), built by extending the existing Decision Advisor. No new top-level pillar.
+Scope locked at gate: full looped version (synchronous engine + WATCH loop + Briefing alerts), built by extending the existing Decision Advisor. No new top-level pillar.
 
 Hard rules carried in: no em dashes anywhere, light-mode skin, mobile-first, RLS on every table, migrations via the Management API (not `db push`), every touched edge function deployed and smoke-tested, no prod-affecting change without written approval at the gate.
 
@@ -29,7 +29,7 @@ A leader speaks a decision or business case. CTRL grounds it in the Memory Web (
 | Health / YMYL guardrails | `_shared/fact-guardrails.ts`, `guardrails-core.ts` | Keep advice in commercial-judgment scope, never overclaim |
 | Attribution emit | `_shared/attribution-emit.ts` | Emit `activated` when first case is verified |
 | Briefing lens already ingests decisions/objectives | `deterministicLens()` in `briefing-lens.ts` | Inject "assumption broke" as a pinned top-weight lens item |
-| Edge Pro gating | `useEdgeSubscription.ts`, `EdgePaywall.tsx` | Gate WATCH loop + cross-exam + Fireflies |
+| Edge Pro gating | `useEdgeSubscription.ts`, `EdgePaywall.tsx` | Gate WATCH loop + cross-exam |
 | Drift concept (precedent) | `compute-drift`, `leader_drift_flags` | Pattern reference for assumption-break detection |
 | Decision Advisor UI entry | `DecisionAdvisor.tsx`, `DecisionCapture.tsx` | Extend, do not replace |
 
@@ -46,7 +46,7 @@ decision_cases                          -- the living decision object
   id uuid pk, user_id, title, statement text,
   status text (active|decided|stale|archived) default 'active',
   decision_kind text (binary|directional|investment|hiring|gtm|other),
-  source text (advisor|capture|voice|fireflies),
+  source text (advisor|capture|voice),
   stage text (decomposing|verifying|cross_examining|advising|complete|error),
   objective_fact_ids uuid[],            -- links to user_memory rows (fact_category='objective')
   user_decision_id uuid null,           -- optional link to Memory Web user_decisions
@@ -137,9 +137,6 @@ Mirrors `generate-briefing`. Auth, parse, early-insert `decision_cases` (stage='
 - The existing script generator then phrases it in the user's briefing voice. On render, mark `decision_alerts.surfaced_in_briefing_id`. Acknowledgement (user taps "re-run the case") flips status and clears the pin.
 - This is the magic moment, and it rides the pipeline that already leads with decisions.
 
-### 4.8 `fireflies-sync` (input enrichment, Edge Pro, Phase C)
-- Pull meeting transcripts (Fireflies API). Route through `extract-user-context` to add facts to the Memory Web, and flag decision-relevant passages as candidate case inputs ("in Tuesday's board call you committed to X, which contradicts this decision").
-
 ---
 
 ## 5. Model and data-source assignments (mapped to the API arsenal)
@@ -159,9 +156,8 @@ Mirrors `generate-briefing`. Auth, parse, early-insert `decision_cases` (stage='
 | Synthesis / advise | gpt-4o | Claude | Streams last |
 | Embeddings | OpenAI text-embedding-3-small | n/a | Reuse briefing-scoring |
 | Page render / scrape (edge cases) | Browserless | Apify | Only when a cited source won't fetch |
-| Meeting ingestion | Fireflies | n/a | Phase C input |
 
-New Supabase secrets to set (via `supabase secrets set`): `ANTHROPIC_API_KEY`, `EXA_API_KEY`, `NEWSAPI_KEY`, `PDL_API_KEY`, `BUILTWITH_API_KEY`, `TRANCO_API_KEY`, `XAI_API_KEY` (Grok), `FIREFLIES_API_KEY`, plus `BROWSERLESS_API_KEY` if used. `PERPLEXITY`, `BRAVE`, `TAVILY`, `OPENAI`, Vertex are already configured for Briefing.
+New Supabase secrets to set (via `supabase secrets set`): `ANTHROPIC_API_KEY`, `EXA_API_KEY`, `NEWSAPI_KEY`, `PDL_API_KEY`, `BUILTWITH_API_KEY`, `TRANCO_API_KEY`, `XAI_API_KEY` (Grok), plus `BROWSERLESS_API_KEY` if used. `PERPLEXITY`, `BRAVE`, `TAVILY`, `OPENAI`, Vertex are already configured for Briefing.
 
 ---
 
@@ -185,7 +181,7 @@ New Supabase secrets to set (via `supabase secrets set`): `ANTHROPIC_API_KEY`, `
 - New light component set under `src/components/operator/decision/` for the staged result, verdict chips, and evidence drawer. Light-mode skin, mobile-first, all four states (loading via staged poll, empty, error with no dead ends, success).
 - A "watching" affordance on completed cases (Edge Pro): shows last verified time and any open alerts; links from the Briefing alert.
 - `useDecisionEngine.ts` hook: kicks off `decision-engine`, polls the case, exposes stages.
-- Edge Pro gating: free tier gets the synchronous one-shot on a limited number of cases; WATCH loop, multi-model cross-exam, and Fireflies are Edge Pro. Justifies the $29/month for the exec ICP.
+- Edge Pro gating: free tier gets the synchronous one-shot on a limited number of cases; WATCH loop and multi-model cross-exam are Edge Pro. Justifies the $29/month for the exec ICP.
 
 ---
 
@@ -193,7 +189,7 @@ New Supabase secrets to set (via `supabase secrets set`): `ANTHROPIC_API_KEY`, `
 
 - **Phase A (synchronous core):** tables, `decision-engine` + `decision-decompose` + `decision-verify` (Perplexity + Exa + Brave) + single-model `decision-advise`, staged UI, eval harness + calibration gate. Ships the pressure test behind a flag, Edge Pro gated.
 - **Phase B (judgment depth + breadth):** `decision-cross-examine` (4-model), adversarial red-team, remaining retrievers (NewsAPI, PDL, BuiltWith, Tranco), tensions UI. Living `decision_cases` persistence and history.
-- **Phase C (the loop + magic):** `decision-watch` (pg_cron + n8n), Briefing injection via `user-context` + `deterministicLens` extension, `fireflies-sync`. This is where it becomes the best version of itself.
+- **Phase C (the loop + magic):** `decision-watch` (pg_cron + n8n), Briefing injection via `user-context` + `deterministicLens` extension. This is where it becomes the best version of itself.
 
 ---
 
@@ -211,5 +207,4 @@ New Supabase secrets to set (via `supabase secrets set`): `ANTHROPIC_API_KEY`, `
 1. Migration safety: there is no documented non-prod CTRL database. Applying these tables touches production Postgres. Approve a one-time apply of the additive, RLS-on, `IF NOT EXISTS` schema, or stand up a shadow project first?
 2. WATCH orchestration: pg_cron (in-Supabase, already used for briefing aggregation) versus n8n (fleet-native, observable in the OS). Recommend pg_cron for Phase C core, n8n only if you want fleet visibility.
 3. Cost ceiling per decision run: multi-model cross-exam plus 5-plus retrievers per claim is the expensive path. Set a per-run token/spend cap and a claims-per-case cap.
-4. Fireflies scope: ingest all meetings, or only ones the user tags? Privacy and noise both argue for tagged-only at first.
-5. Edge Pro line: confirm the free/paid split above (free = limited one-shot; paid = loop + cross-exam + Fireflies).
+4. Edge Pro line: confirm the free/paid split above (free = limited one-shot; paid = loop + cross-exam).

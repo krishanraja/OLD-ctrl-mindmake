@@ -48,7 +48,7 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const statement: string = (body.statement ?? "").toString().trim();
-    const source: string = ["advisor", "capture", "voice", "fireflies"].includes(body.source) ? body.source : "advisor";
+    const source: string = ["advisor", "capture", "voice"].includes(body.source) ? body.source : "advisor";
     if (statement.length < 8) return json({ error: "Provide a decision or business case to pressure-test (at least a sentence)." }, 400);
     if (statement.length > 4000) return json({ error: "Statement too long. Keep it under 4000 characters." }, 400);
 
