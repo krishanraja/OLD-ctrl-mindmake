@@ -4,6 +4,12 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-11-17
+
+- reconciled `NOW.md`: re-stamped `as_of` and `head`; moved the Fireflies line from "Where it is right now" to "What changed recently" (limit of 8 bullets); dated the waiting-on-evidence line.
+- rolled from NOW.md: bullets more than 30 days old (the steward's window):
+  - 2026-10-15 **OpenAI chat storage is switched off.** PR #398, "Disable storage for OpenAI Chat Completions", sets the privacy fix in `supabase/functions/_shared/openai-utils.ts` and binds the privacy functions to the configured project. Merged; no deployment readback is recorded here.
+
 ## 2026-11-14
 
 - reconciled `NOW.md`: re-stamped `as_of` and `head`, merged the Documentation bullet out of "Where it is right now" (the 2026-09-07 archive move is already logged above), and added the 2026-09-08 to 2026-10-15 changes from commit messages.
