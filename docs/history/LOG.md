@@ -4,6 +4,13 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-11-26
+
+- reconciled `NOW.md`: re-stamped `as_of` and `head` (commits since 2026-11-14 are the Fireflies removal and canon syncs), folded the Fireflies note into "What changed recently", and cut "Where it is right now" to eight bullets by merging the duplicate waiting-on-evidence bullet into "What is next".
+- rolled from NOW.md: bullets more than 30 days old (the steward's window):
+  - 2026-10-15 **OpenAI chat storage is switched off.** PR #398, "Disable storage for OpenAI Chat Completions", sets the privacy fix in `supabase/functions/_shared/openai-utils.ts` and binds the privacy functions to the configured project. Merged; no deployment readback is recorded here.
+  - 2026-10-23 **The North Star now has a number, a weekly ladder and an urgency rating, so every session knows how far behind it is and how hard to push.** Ruling (Krish, 2026-10-23): every repository chases one aggressive number on a weekly ladder, and urgency U1 to U5 sets its intensity. The number and ladder are in `project-documentation/NORTH_STAR.md`. Contract: ai-harness `contract/north-star-metric.md`.
+
 ## 2026-11-14
 
 - reconciled `NOW.md`: re-stamped `as_of` and `head`, merged the Documentation bullet out of "Where it is right now" (the 2026-09-07 archive move is already logged above), and added the 2026-09-08 to 2026-10-15 changes from commit messages.
